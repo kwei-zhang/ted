@@ -10,6 +10,11 @@ def main():
     )
 
     parser.add_argument(
+        "--link",
+        help="Comma-seperated list of links to scrape",
+    )
+
+    parser.add_argument(
         "--topics",
         help="Comma-seperated list of topics to scrape; as given on ted.com/talks",
     )
@@ -189,8 +194,8 @@ def main():
     from ted2zim.scraper import Ted2Zim
 
     try:
-        if args.topics and args.playlist:
-            parser.error("--topics is incompatible with --playlist")
+        if sum(1 for x in [args.topics, args.playlist, args.link] if x) > 1:
+            parser.error("--topics, --playlist, and --link are mutually exclusive")
         elif args.topics:
             if args.subtitles_enough and not args.languages:
                 parser.error(
@@ -200,8 +205,10 @@ def main():
         elif args.playlist:
             if args.subtitles_enough:
                 parser.error("--subtitles-enough is not compatible with playlists")
+        elif args.link:
+            pass
         else:
-            parser.error("Either --topics or --playlist is required")
+            parser.error("One of --topics, --playlist, or --link is required")
         if not args.subtitles_setting:
             parser.error("--subtitles cannot take an empty string")
 
